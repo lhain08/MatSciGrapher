@@ -5,7 +5,7 @@ import math
 
 # Function to read in a data file
 def read_file(addr):
-    f = open(addr, "r")
+    f = open(addr, "r", errors='ignore')
     n = 0
     # Skip over header text (n is a precaution to make sure that if something goes wrong the loop will end)
     while len(f.readline().split("\t")) != 3:
@@ -27,8 +27,6 @@ def read_file(addr):
             if f0:
                 if len(row) == 3:
                     t.push(row)
-                else:
-                    print(t.Time[-1])
             else:
                 if row[0] == 0:
                     f0 = True
@@ -49,8 +47,6 @@ def retrieve_data(window, folder):
             tests.append(t)
             if len(breaks) > 1:
                 load_t.append(breaks[1])
-
-    print(load_t)
 
     # Get the title for the plot from the folder name
     fname = folder.split('/')[-1]
