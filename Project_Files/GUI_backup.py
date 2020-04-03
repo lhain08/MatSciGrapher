@@ -114,6 +114,10 @@ def create_zoom_and_fit(window, load_zoom_cmd=None, load_fit_cmd=None, hold_zoom
     window.menu = OptionMenu(f, window.choice, *options)
     window.menu.grid(row=2, column=0, columnspan=2, sticky="ew")
     window.menu.items = []
+    # Create a frame for the results menu
+    ttk.Separator(frame, orient=HORIZONTAL).grid(pady=10,column=0, row=9, columnspan=3, sticky='ew')
+    results = Frame(frame)
+    results.grid(row=10, column=0, columnspan=3)
 
     frame.pack(side=TOP, padx=6, pady=6)
 
@@ -121,6 +125,8 @@ def create_zoom_and_fit(window, load_zoom_cmd=None, load_fit_cmd=None, hold_zoom
     window.s_frame = border
     window.check_frame = check_frame
     window.z_range = range_entries
+
+    return results
 
 
 # Takes a frame and color and adds a checkbox for a single set

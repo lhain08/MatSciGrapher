@@ -35,9 +35,17 @@ class Window:
         self.hold_choice = None
         self.unload_choice = None
 
-        # Create the frames
+        # Open the root
         self.root = tk.Tk()
         self.root.wm_title("Nano-Indentation Graphs")
+
+        # Create the notebook
+        # Wrapper frame
+        f = Frame(self.root, bd=1, relief=GROOVE)
+        self.nb = ttk.Notebook(f)
+        self.nb.pack(side='top')
+
+        # Create the frames
         self.top_frame = GUI.create_top(self.root, self.open_folder, self.save_as, self.quit)
         self.g_frame = Frame(self.root, bd=3, relief=GROOVE)                 # Graph Frame
         self.t_frame = Frame(self.root)                 # Testing Frame
@@ -47,20 +55,21 @@ class Window:
         self.menu = None
         self.choice = None
         self.fit_choice = None
-        res_frame = GUI.create_zoom_and_fit(self,
-                                            load_zoom_cmd=self.zoom_loading,
-                                            load_fit_cmd=lambda: DataManip.auto_fit(self, "Load"),
-                                            hold_zoom_cmd=self.zoom_holding,
-                                            hold_fit_cmd=lambda: DataManip.auto_fit(self, "Hold"),
-                                            unload_zoom_cmd=self.zoom_unloading,
-                                            unload_fit_cmd=lambda: DataManip.auto_fit(self, "Unload"),
-                                            zoom_range_cmd=self.zoom_range,
-                                            zoom_out_cmd=self.revert, clear_cmd=self.clear_fits)
+        GUI.create_zoom_and_fit(self,
+                                load_zoom_cmd=self.zoom_loading,
+                                load_fit_cmd=lambda: DataManip.auto_fit(self, "Load"),
+                                hold_zoom_cmd=self.zoom_holding,
+                                hold_fit_cmd=lambda: DataManip.auto_fit(self, "Hold"),
+                                unload_zoom_cmd=self.zoom_unloading,
+                                unload_fit_cmd=lambda: DataManip.auto_fit(self, "Unload"),
+                                zoom_range_cmd=self.zoom_range,
+                                zoom_out_cmd=self.revert, clear_cmd=self.clear_fits)
+
         # Pack outer frames
         self.top_frame.pack(side=TOP, fill='x')
-        self.s_frame.pack(side=RIGHT, fill='y')
+        self.nb.add(self.s_frame, text="Auto-Fit")
+        f.pack(side=RIGHT, fill='y')
         self.g_frame.pack(side=TOP, anchor='nw')
-        self.t_frame.pack(side=TOP, anchor='nw', padx=5, pady=5)
 
         # Create the figure
         self.cur_style = 5
@@ -95,6 +104,9 @@ class Window:
                                                       lambda: self.set_range(self.load_time, self.max_time - 10),
                                                       lambda: self.set_range(self.max_time - 10, self.max_time),
                                                       lambda: self.set_range(0, self.max_time))
+
+        # TEMP FRAME
+        res_frame = Frame(self.root)
 
         self.result_f = GUI.init_results(res_frame, cmd=self.copy_results)
         self.cur_eq = None
