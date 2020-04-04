@@ -66,30 +66,30 @@ class HoldingEquation:
             return self.P0 * (math.exp(1)**(-(time/tao)**b))
 
 
-def auto_fit(plot, stage, show=True, test_index=None):
+def autoFit(plot, stage, show=True, test_index=None):
     if test_index is None:
-        test_index = plot.choice.get()
+        test_index = plot.vars['choice'].get()
         if test_index == "-Select Set for Fit-":
             plot.error(1)
             return
-        test_index = int(plot.choice.get().split(" ")[-1])
+        test_index = int(test_index.split(' ')[-1])
 
     if stage.upper() == "LOAD":
         start_t = 0
         end_t = plot.load_time
-        eq = getattr(Functions, plot.load_choice.get())
+        eq = getattr(Functions, plot.vars['load choice'].get())
     elif stage.upper() == "HOLD":
         start_t = plot.load_time
         end_t = plot.max_time-10
-        eq = getattr(Functions, plot.hold_choice.get())
+        eq = getattr(Functions, plot.vars['hold choice'].get())
     elif stage.upper() == "UNLOAD":
         start_t = plot.max_time-10    # When unloading equation is available
         end_t = plot.max_time
-        eq = getattr(Functions, plot.unload_choice.get())
+        eq = getattr(Functions, plot.vars['unload choice'].get())
     else:
         plot.error()
         return
-    if plot.fit_choice.config('text')[-1] == 'Fit to View':
+    if plot.vars.get('fit choice') is not None and plot.vars['fit choice'].config('text')[-1] == 'Fit to View':
         start_t, end_t = plot.ax.get_xlim()
     p = len(inspect.getfullargspec(eq).args[1:])
     index0 = plot.get_time_index(start_t, test_index)

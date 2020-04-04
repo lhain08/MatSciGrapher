@@ -1,12 +1,19 @@
 from tkinter import *
 from tkinter import ttk
 import tkinter as tk
-import DataManip
+import DataManip as dm
 import webcolors
 import inspect
 import Functions
 import FileIO
 
+# Returns a list of all the available functions in Functions.py
+def get_funcs():
+    options = []
+    for f in dir(Functions):
+        if type(getattr(Functions, f)).__name__ == "function":
+            options.append(f)
+    return options
 
 '''
 Takes the window object and appends a new tab to the notebook
@@ -52,4 +59,44 @@ New tab contains graph zoom and fit options
 '''
 def buildFit(window):
     parent = Frame(window.nb)
-    window.nb.add(parent, "Auto-Fit")
+    window.nb.add(parent, text="Auto-Fit")
+    sub_frame = Frame(parent)
+    sub_frame.pack(side='top')
+
+    # Create the header
+    header_text = Label(sub_frame, text="Automatic Zoom and Fit", font='Helvetica 11 bold')
+    header_text.grid(row=0, columnspan=3, sticky="n")
+    ttk.Separator(sub_frame, orient=HORIZONTAL).grid(pady=10, column=0, row=1, columnspan=3, sticky='ew')
+
+    # Get the function list
+    options = get_funcs()
+
+    # Create Loading label and buttons
+    load_zoom = Button(sub_frame, text="Loading", command=window.zoom_loading, width=9)
+    load_zoom.grid(row=2, column=0)
+    window.vars['load choice'] = StringVar(sub_frame)
+    window.vars['load choice'].set("Loading")
+    menu = OptionMenu(sub_frame, window.vars['load choice'], *options)
+    menu.config(width=8)
+    menu.grid(row=2, column=1)
+    Button(sub_frame, text="Fit", command=lambda: dm.autoFit(window, 'LOAD')).grid(row=2, column=2)
+
+    # Create Holding label and buttons
+    hold_zoom = Button(sub_frame, text="Holding", command=window.zoom_holding, width=9)
+    hold_zoom.grid(row=3, column=0)
+    window.hold_choice = StringVar(sub_frame)
+    window.hold_choice.set("Holding")
+    menu = OptionMenu(sub_frame, window.hold_choice, *options)
+    menu.config(width=8)
+    menu.grid(row=3, column=1)
+    Button(sub_frame, text="Fit", command=lambda: dm.autoFit(window, 'HOLD')).grid(row=3, column=2)
+
+    # Create Unloading label and buttons
+    unload_zoom = Button(sub_frame, text="Unloading", command=window.zoom_unloading, width=9)
+    unload_zoom.grid(row=4, column=0)
+    window.unload_choice = StringVar(sub_frame)
+    window.unload_choice.set(options[0])
+    menu = OptionMenu(sub_frame, window.unload_choice, *options)
+    menu.config(width=8)
+    menu.grid(row=4, column=1)
+    Button(sub_frame, text="Fit", command=lambda: dm.autoFit(window, 'UNLOAD')).grid(row=4, column=2)
