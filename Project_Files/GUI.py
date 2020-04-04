@@ -31,10 +31,10 @@ def buildDir(window):
     ### Header and Buttons ###
     Label(parent, text="Select Data", font='Helvetica 15 bold').pack(side='top')
     Button(parent, command=lambda: window.widgets['tree'].delete(*window.widgets['tree'].get_children()),\
-           text="Clear Directories").pack(side='top')
+           text="Clear Directories", takefocus=NO).pack(side='top')
     select_call = lambda: window.error(7)\
         if FileIO.populate_tree(window.widgets['tree'], tk.filedialog.askdirectory(parent=window.root)) else False
-    Button(parent, command=select_call, text="Select Directory").pack(side='top')
+    Button(parent, command=select_call, text="Select Directory", takefocus=NO).pack(side='top')
 
     ### Directory Tree ###
     # Create tree
@@ -50,7 +50,7 @@ def buildDir(window):
 
     # Add load data button
     Button(parent, command=lambda: window.open_folder(window.widgets['tree'].focus()),\
-           text="Open Selected Data").pack(side='top')
+           text="Open Selected Data", takefocus=NO).pack(side='top')
 
 
 '''
@@ -64,7 +64,7 @@ def buildFit(window):
     sub_frame.pack(side='top')
 
     # Create the header
-    header_text = Label(sub_frame, text="Automatic Zoom and Fit", font='Helvetica 11 bold')
+    header_text = Label(sub_frame, text="Automatic Zoom and Fit", font='Helvetica 15 bold')
     header_text.grid(row=0, columnspan=3, sticky="n")
     ttk.Separator(sub_frame, orient=HORIZONTAL).grid(pady=10, column=0, row=1, columnspan=3, sticky='ew')
 
@@ -72,31 +72,28 @@ def buildFit(window):
     options = get_funcs()
 
     # Create Loading label and buttons
-    load_zoom = Button(sub_frame, text="Loading", command=window.zoom_loading, width=9)
-    load_zoom.grid(row=2, column=0)
+    Button(sub_frame, text="Loading", command=window.zoom_loading, width=9, takefocus=NO).grid(row=2, column=0)
     window.vars['load choice'] = StringVar(sub_frame)
     window.vars['load choice'].set("Loading")
     menu = OptionMenu(sub_frame, window.vars['load choice'], *options)
     menu.config(width=8)
     menu.grid(row=2, column=1)
-    Button(sub_frame, text="Fit", command=lambda: dm.autoFit(window, 'LOAD')).grid(row=2, column=2)
+    Button(sub_frame, text="Fit", command=lambda: dm.autoFit(window, 'LOAD'), takefocus=NO).grid(row=2, column=2)
 
     # Create Holding label and buttons
-    hold_zoom = Button(sub_frame, text="Holding", command=window.zoom_holding, width=9)
-    hold_zoom.grid(row=3, column=0)
+    Button(sub_frame, text="Holding", command=window.zoom_holding, width=9, takefocus=NO).grid(row=3, column=0)
     window.hold_choice = StringVar(sub_frame)
     window.hold_choice.set("Holding")
     menu = OptionMenu(sub_frame, window.hold_choice, *options)
     menu.config(width=8)
     menu.grid(row=3, column=1)
-    Button(sub_frame, text="Fit", command=lambda: dm.autoFit(window, 'HOLD')).grid(row=3, column=2)
+    Button(sub_frame, text="Fit", command=lambda: dm.autoFit(window, 'HOLD'), takefocus=NO).grid(row=3, column=2)
 
     # Create Unloading label and buttons
-    unload_zoom = Button(sub_frame, text="Unloading", command=window.zoom_unloading, width=9)
-    unload_zoom.grid(row=4, column=0)
+    Button(sub_frame, text="Unloading", command=window.zoom_unloading, width=9, takefocus=NO).grid(row=4, column=0)
     window.unload_choice = StringVar(sub_frame)
     window.unload_choice.set(options[0])
     menu = OptionMenu(sub_frame, window.unload_choice, *options)
     menu.config(width=8)
     menu.grid(row=4, column=1)
-    Button(sub_frame, text="Fit", command=lambda: dm.autoFit(window, 'UNLOAD')).grid(row=4, column=2)
+    Button(sub_frame, text="Fit", command=lambda: dm.autoFit(window, 'UNLOAD'), takefocus=NO).grid(row=4, column=2)

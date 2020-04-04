@@ -37,8 +37,9 @@ class Window:
         self.graph = Frame(self.root)   # Container for graph canvas
         self.graph.pack(side="left")
 
-        # Dictionary of stored widgets
+        # Dictionaries for stored widgets and variables
         self.widgets = {}
+        self.vars = {}
 
         # Get the display size
         self.screen_width = self.root.winfo_screenwidth()
@@ -57,6 +58,7 @@ class Window:
 
         # Build Tabs
         GUI.buildDir(self)
+        GUI.buildFit(self)
 
 
     # Prompt for a data folder
