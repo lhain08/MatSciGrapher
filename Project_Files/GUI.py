@@ -13,6 +13,11 @@ Takes the window object and appends a new tab to the notebook
 New tab holds load/store options including directory for selecting data
 '''
 def buildDir(window):
+    # Prompt for a directory
+    tk.messagebox.showinfo(title="Open Data", message="Please select a directory for your data")
+    dir = tk.filedialog.askdirectory(parent=window.root)
+
+    # Initiate the parent tab
     parent = Frame(window.nb)
     window.nb.add(parent, text="Load/Save")
 
@@ -26,12 +31,14 @@ def buildDir(window):
 
     ### Directory Tree ###
     # Create tree
-    window.widgets['tree'] = ttk.Treeview(parent, selectmode='browse')
-    window.widgets['tree'].pack()
+    tFrame = Frame(parent)
+    tFrame.pack(side='top', expand=False)
+    window.widgets['tree'] = ttk.Treeview(tFrame, selectmode='browse')
+    window.widgets['tree'].column("#0", stretch=YES)
+    window.widgets['tree'].heading("#0", text="Directory")
+    window.widgets['tree'].pack(side='top', fill=BOTH, expand='yes')
 
     # Populate tree
-    tk.messagebox.showinfo(title="Open Data", message="Please select a directory for your data")
-    dir = tk.filedialog.askdirectory(parent=window.root)
     FileIO.populate_tree(window.widgets['tree'], dir)
 
     # Add load data button

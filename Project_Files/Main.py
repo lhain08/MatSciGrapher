@@ -62,7 +62,12 @@ class Window:
     # Prompt for a data folder
     def open_folder(self, folder=None):
         if folder is None: folder = tk.filedialog.askdirectory()
-        self.Tests, self.title, A = FileIO.retrieve_data(self, folder)
+        Tests, title, A = FileIO.retrieve_data(self, folder)
+        if len(Tests) == 0:
+            self.error(8)
+            return
+        self.Tests = Tests
+        self.title = title
         Functions.A = A
         self.max_time = round(max([max(t.Time) for t in self.Tests]))
         self.max_load = max([max(t.Load) for t in self.Tests])
@@ -329,6 +334,8 @@ class Window:
             message = "Invalid range for zoom, please re-enter and try again"
         elif code == 7:
             message = "Overlapping content is displayed in originally selected directory"
+        elif code == 8:
+            message = "No data found in selected content"
         messagebox.showinfo("Warning", message)
 
 

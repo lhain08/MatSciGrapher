@@ -38,7 +38,12 @@ def read_file(addr):
 
 def retrieve_data(window, folder):
     # Retrieve all data from folder and remove analysis file
-    file_names = next(os.walk(folder))[2]
+    print(folder)
+    if os.path.isfile(folder):
+        file_names = [os.path.split(folder)[1]]
+        folder = os.path.split(folder)[0]
+    else:
+        file_names = next(os.walk(folder))[2]
     tests = []
     load_t = []
     for fn in file_names:
@@ -85,7 +90,7 @@ def populate_tree(tree, folder, parent='', count = 0):
     for sub_folder in files[1]:
         returnVal = populate_tree(tree, sub_folder, id, count+1)
     for file in files[2]:
-        tree.insert(id, 'end', text=file)
+        tree.insert(id, 'end', id+'/'+file, text=file)
 
     return returnVal
 
