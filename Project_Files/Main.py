@@ -21,100 +21,47 @@ class Window:
         self.Tests = []
         self.Temporaries = []
         self.TempPlots = []
-        # Data dependent variables
+
+        # Initialize data dependent variables
         self.load_time = 0
         self.max_time = 0
         self.max_load = 0
         self.min_load = 0
         self.title = ""
 
-        # Fitting equations
-        self.load_eq = DataManip.LoadingEquation()
-        self.hold_eq = DataManip.HoldingEquation()
-        self.load_choice = None
-        self.hold_choice = None
-        self.unload_choice = None
-
-        # Open the root
+        # Reuseable frames
         self.root = tk.Tk()
-        self.root.wm_title("Nano-Indentation Graphs")
+        self.root.wm_title("Nano-Indentation Graphs")   # Title the window
+        self.nb = ttk.Notebook(self.root)
+        self.nb.pack(side="right", fill='y')
+        self.graph = Frame(self.root)   # Container for graph canvas
+        self.graph.pack(side="left")
 
-        # Create the notebook
-        # Wrapper frame
-        f = Frame(self.root, bd=1, relief=GROOVE)
-        self.nb = ttk.Notebook(f)
-        self.nb.pack(side='top')
+        # Dictionary of stored widgets
+        self.widgets = {}
 
-        # Create the frames
-        self.top_frame = GUI.create_top(self.root, self.open_folder, self.save_as, self.quit)
-        self.g_frame = Frame(self.root, bd=3, relief=GROOVE)                 # Graph Frame
-        self.t_frame = Frame(self.root)                 # Testing Frame
-        self.s_frame = None
-        self.check_frame = None
-        self.z_range = None
-        self.menu = None
-        self.choice = None
-        self.fit_choice = None
-        GUI.create_zoom_and_fit(self,
-                                load_zoom_cmd=self.zoom_loading,
-                                load_fit_cmd=lambda: DataManip.auto_fit(self, "Load"),
-                                hold_zoom_cmd=self.zoom_holding,
-                                hold_fit_cmd=lambda: DataManip.auto_fit(self, "Hold"),
-                                unload_zoom_cmd=self.zoom_unloading,
-                                unload_fit_cmd=lambda: DataManip.auto_fit(self, "Unload"),
-                                zoom_range_cmd=self.zoom_range,
-                                zoom_out_cmd=self.revert, clear_cmd=self.clear_fits)
+        # Get the display size
+        self.screen_width = self.root.winfo_screenwidth()
+        self.screen_height = self.root.winfo_screenheight()
 
-        # Pack outer frames
-        self.top_frame.pack(side=TOP, fill='x')
-        self.nb.add(self.s_frame, text="Auto-Fit")
-        f.pack(side=RIGHT, fill='y')
-        self.g_frame.pack(side=TOP, anchor='nw')
-
+        ### Build the graph ###
         # Create the figure
-        self.cur_style = 5
-        plt.style.use(plt.style.available[self.cur_style])
-        self.fig = Figure(figsize=(8, 5), dpi=110)
+        self.fig = Figure(figsize=(8,6))
         self.ax = self.fig.add_subplot(111)
         self.ax.set_xlabel("Time (s)")
         self.ax.set_ylabel("Load (uN)")
         # Create the canvas
-        self.canvas = FigureCanvasTkAgg(self.fig, master=self.g_frame)
+        self.canvas = FigureCanvasTkAgg(self.fig, master=self.graph)
         self.canvas.draw()
         self.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
 
-        # Testing packing
-        # Parameter Options
-        f = Frame(self.t_frame)
-        f.grid(row=0, column=0, columnspan=99, pady=10, sticky="we")
-        self.func_menu, self.func_select = GUI.function_menu(f, self.func_select_callback)
+        # Build Tabs
+        GUI.buildDir(self)
 
-        self.param_frame = Frame(self.t_frame)
-        self.param_frame.grid(row=1, column=0)
-        self.param_entries = GUI.set_params_menu(self.param_frame, getattr(Functions, self.func_select.get()))
-
-        # Separators
-        tkinter.ttk.Separator(self.t_frame, orient=VERTICAL).grid(padx=10, column=1, row=1, rowspan=4, sticky='ns')
-
-        # Range and Fitting
-        range_frame = Frame(self.t_frame, bd=3, relief=GROOVE)
-        range_frame.grid(row=1, column=2)
-        self.lower, self.upper = GUI.create_scale_box(range_frame, self,
-                                                      lambda: self.set_range(0, self.load_time),
-                                                      lambda: self.set_range(self.load_time, self.max_time - 10),
-                                                      lambda: self.set_range(self.max_time - 10, self.max_time),
-                                                      lambda: self.set_range(0, self.max_time))
-
-        # TEMP FRAME
-        res_frame = Frame(self.root)
-
-        self.result_f = GUI.init_results(res_frame, cmd=self.copy_results)
-        self.cur_eq = None
-        self.result_params = []
 
     # Prompt for a data folder
-    def open_folder(self):
-        folder = tk.filedialog.askdirectory()
+    def open_folder(self, folder=None):
+        if folder is None: folder = tk.filedialog.askdirectory()
         self.Tests, self.title, A = FileIO.retrieve_data(self, folder)
         Functions.A = A
         self.max_time = round(max([max(t.Time) for t in self.Tests]))
@@ -137,8 +84,8 @@ class Window:
         for b in self.Temporaries:
             b.forget()
         # Clear the option menu
-        self.menu['menu'].delete(1, "end")
-        self.choice.set("-Select Set for Fit-")
+        #self.menu['menu'].delete(1, "end")
+        #self.choice.set("-Select Set for Fit-")
         self.fig.clf()
         self.ax = self.fig.add_subplot(111)
         self.ax.set_xlabel("Time (s)")
@@ -150,10 +97,10 @@ class Window:
             # Create checkbox
             test.active = IntVar()
             color = test.plotref.get_facecolors()[0][:3] * 256  # Matches the color to its respective plot
-            check_button = GUI.push_check(self.check_frame, color, test.active, self.Tests.index(test), self.checked)
+        #    check_button = GUI.push_check(self.check_frame, color, test.active, self.Tests.index(test), self.checked)
             s = "Set %d" % (self.Tests.index(test))
-            self.menu['menu'].add_command(label=s, command=tk._setit(window.choice, s))
-            self.Temporaries.append(check_button)
+        #    self.menu['menu'].add_command(label=s, command=tk._setit(window.choice, s))
+        #    self.Temporaries.append(check_button)
             index += 1
         self.revert()
 
@@ -162,10 +109,10 @@ class Window:
         self.canvas.draw()
 
         # Set max range for sliders
-        self.upper.delete(0, END)
-        self.upper.insert(0, self.max_time)
-        self.lower.delete(0, END)
-        self.lower.insert(0, 0)
+        #self.upper.delete(0, END)
+        #self.upper.insert(0, self.max_time)
+        #self.lower.delete(0, END)
+        #self.lower.insert(0, 0)
 
     # Hides/shows plots when boxes are checked
     def checked(self):
@@ -380,6 +327,8 @@ class Window:
             message = "This function has not been implemented yet"
         elif code == 6:
             message = "Invalid range for zoom, please re-enter and try again"
+        elif code == 7:
+            message = "Overlapping content is displayed in originally selected directory"
         messagebox.showinfo("Warning", message)
 
 

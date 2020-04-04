@@ -65,6 +65,31 @@ def retrieve_data(window, folder):
     return tests, title, A
 
 
+'''
+Take a tree and folder and recursively populate the tree below the starting folder
+'''
+def populate_tree(tree, folder, parent='', count = 0):
+    returnVal = 0   # Catches overlap issues
+    try:
+        id = tree.insert(parent, 'end', parent.rstrip('/') + '/' + folder, text=folder)
+    except:
+        return 1
+    try:
+        files = next(os.walk(parent.rstrip('/') + '/' + folder))
+    except StopIteration:
+        return
+
+    # limit the depth of the population
+    if count >= 6: return
+
+    for sub_folder in files[1]:
+        returnVal = populate_tree(tree, sub_folder, id, count+1)
+    for file in files[2]:
+        tree.insert(id, 'end', text=file)
+
+    return returnVal
+
+
 # Pushes the most recent fit to the output file
 def output_params(title, data):
     f = open("Fit_Results/" + title + ".txt", "w")
