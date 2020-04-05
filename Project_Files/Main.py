@@ -33,8 +33,10 @@ class Window:
         self.root = tk.Tk()
         self.root.wm_title("Nano-Indentation Graphs")   # Title the window
         print(ttk.Style().theme_names())
-        ttk.Style().theme_use('aqua')
-        self.nb = ttk.Notebook(self.root)
+        style = ttk.Style()
+        style.theme_use('aqua')
+        style.configure('lefttab.TNotebook', tabposition='wn')
+        self.nb = ttk.Notebook(self.root, style='lefttab.TNotebook')
         self.nb.pack(side="right", fill='y')
         self.graph = Frame(self.root)   # Container for graph canvas
         self.graph.pack(side="left")
@@ -99,8 +101,8 @@ class Window:
                 child.destroy()
             self.widgets['check buttons'] = []
         # Clear the option menu
-        #self.menu['menu'].delete(1, "end")
-        #self.choice.set("-Select Set for Fit-")
+        self.widgets['menu']['menu'].delete(1, "end")
+        self.vars['set choice'].set("-Select Set for Fit-")
         self.fig.clf()
         self.ax = self.fig.add_subplot(111)
         self.ax.set_xlabel("Time (s)")
@@ -115,7 +117,7 @@ class Window:
             check_button = GUI.push_check(self.widgets['check frame'], color, test.active,\
                                           self.Tests.index(test), self.checked)
             s = "Set %d" % (self.Tests.index(test))
-        #    self.menu['menu'].add_command(label=s, command=tk._setit(window.choice, s))
+            self.widgets['menu']['menu'].add_command(label=s, command=tk._setit(window.vars['set choice'], s))
             self.widgets['check buttons'].append(check_button)
             index += 1
         self.revert()
@@ -135,19 +137,19 @@ class Window:
         for test in self.Tests:
             if test.active.get() != test.plotref.get_visible():
                 s = "Set %d" % (self.Tests.index(test))
-                # if test.active.get():
-                #     self.menu["menu"].add_command(label=s, command=tk._setit(self.choice, s))
-                #     if self.choice.get() == "-Select Set for Fit-":
-                #         self.choice.set(s)
-                # else:
-                #     i = 0
-                #     while i <= self.menu['menu'].index("end"):
-                #         if self.menu['menu'].entrycget(i, "label") == s:
-                #             if self.choice.get() == s:
-                #                 self.choice.set("-Select Set for Fit-")
-                #             self.menu["menu"].delete(i, i)
-                #             break
-                #         i += 1
+                if test.active.get():
+                    self.widgets['menu']["menu"].add_command(label=s, command=tk._setit(self.vars['set choice'], s))
+                    if self.vars['set choice'].get() == "-Select Set for Fit-":
+                        self.vars['set choice'].set(s)
+                else:
+                    i = 0
+                    while i <= self.widgets['menu']['menu'].index("end"):
+                        if self.widgets['menu']['menu'].entrycget(i, "label") == s:
+                            if self.vars['set choice'].get() == s:
+                                self.vars['set choice'].set("-Select Set for Fit-")
+                            self.widgets["menu"]['menu'].delete(i, i)
+                            break
+                        i += 1
                 test.plotref.set_visible(test.active.get())
                 if not (test.active.get()):
                     for p in test.fits:

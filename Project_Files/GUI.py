@@ -98,6 +98,14 @@ def buildFit(window):
     menu.grid(row=4, column=1)
     Button(sub_frame, text="Fit", command=lambda: dm.autoFit(window, 'UNLOAD'), takefocus=NO).grid(row=4, column=2)
 
+    # Create Set Selection menu
+    window.vars['set choice'] = StringVar(parent)
+    window.vars['set choice'].set("-Select Set for Fit-")
+    options = {"-Select Set for Fit-"}
+    window.widgets['menu'] = OptionMenu(sub_frame, window.vars['set choice'], *options)
+    window.widgets['menu'].grid(row=5, column=0, columnspan=3, sticky="ew")
+    window.widgets['menu'].items = []
+
 
 def buildSets(window):
     parent = Frame(window.nb)
