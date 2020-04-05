@@ -97,3 +97,28 @@ def buildFit(window):
     menu.config(width=8)
     menu.grid(row=4, column=1)
     Button(sub_frame, text="Fit", command=lambda: dm.autoFit(window, 'UNLOAD'), takefocus=NO).grid(row=4, column=2)
+
+
+def buildSets(window):
+    parent = Frame(window.nb)
+    window.nb.add(parent, text="Select Sets")
+
+    # Headers
+    Label(parent, text="Choose sets to be displayed", font="Helvetica 15 bold").pack(side='top')
+
+    # Build the container for checkboxes
+    window.widgets['check frame'] = Frame(parent)
+    window.widgets['check frame'].pack(side='top')
+    # Add some temporary text as a placeholder
+    Label(window.widgets['check frame'], text="No data has been loaded.").pack()
+    Label(window.widgets['check frame'], text="You will be able to select which").pack()
+    Label(window.widgets['check frame'], text="sets you want displayed here").pack()
+
+
+# Takes a frame and color and adds a checkbox for a single set
+def push_check(frame, color, intvar, i, cmd):
+    color = webcolors.rgb_to_hex([int(x) for x in color])
+    check_button = Checkbutton(frame, text="Set %d" % i, variable=intvar, command=cmd, fg=color, takefocus=NO)
+    check_button.pack(side=TOP)
+    check_button.select()
+    return check_button

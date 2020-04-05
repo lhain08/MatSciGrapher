@@ -32,6 +32,8 @@ class Window:
         # Reuseable frames
         self.root = tk.Tk()
         self.root.wm_title("Nano-Indentation Graphs")   # Title the window
+        print(ttk.Style().theme_names())
+        ttk.Style().theme_use('aqua')
         self.nb = ttk.Notebook(self.root)
         self.nb.pack(side="right", fill='y')
         self.graph = Frame(self.root)   # Container for graph canvas
@@ -59,6 +61,7 @@ class Window:
         # Build Tabs
         GUI.buildDir(self)
         GUI.buildFit(self)
+        GUI.buildSets(self)
 
 
     # Prompt for a data folder
@@ -88,8 +91,13 @@ class Window:
         # Clear any fits
         self.clear_fits()
         # Delete Associated buttons
-        for b in self.Temporaries:
-            b.forget()
+        if self.widgets.get('check buttons') is not None:
+            for b in self.widgets['check buttons']:
+                b.forget()
+        else:   # Initialize the check button data
+            for child in self.widgets['check frame'].winfo_children():
+                child.destroy()
+            self.widgets['check buttons'] = []
         # Clear the option menu
         #self.menu['menu'].delete(1, "end")
         #self.choice.set("-Select Set for Fit-")
@@ -104,10 +112,11 @@ class Window:
             # Create checkbox
             test.active = IntVar()
             color = test.plotref.get_facecolors()[0][:3] * 256  # Matches the color to its respective plot
-        #    check_button = GUI.push_check(self.check_frame, color, test.active, self.Tests.index(test), self.checked)
+            check_button = GUI.push_check(self.widgets['check frame'], color, test.active,\
+                                          self.Tests.index(test), self.checked)
             s = "Set %d" % (self.Tests.index(test))
         #    self.menu['menu'].add_command(label=s, command=tk._setit(window.choice, s))
-        #    self.Temporaries.append(check_button)
+            self.widgets['check buttons'].append(check_button)
             index += 1
         self.revert()
 
@@ -126,19 +135,19 @@ class Window:
         for test in self.Tests:
             if test.active.get() != test.plotref.get_visible():
                 s = "Set %d" % (self.Tests.index(test))
-                if test.active.get():
-                    self.menu["menu"].add_command(label=s, command=tk._setit(self.choice, s))
-                    if self.choice.get() == "-Select Set for Fit-":
-                        self.choice.set(s)
-                else:
-                    i = 0
-                    while i <= self.menu['menu'].index("end"):
-                        if self.menu['menu'].entrycget(i, "label") == s:
-                            if self.choice.get() == s:
-                                self.choice.set("-Select Set for Fit-")
-                            self.menu["menu"].delete(i, i)
-                            break
-                        i += 1
+                # if test.active.get():
+                #     self.menu["menu"].add_command(label=s, command=tk._setit(self.choice, s))
+                #     if self.choice.get() == "-Select Set for Fit-":
+                #         self.choice.set(s)
+                # else:
+                #     i = 0
+                #     while i <= self.menu['menu'].index("end"):
+                #         if self.menu['menu'].entrycget(i, "label") == s:
+                #             if self.choice.get() == s:
+                #                 self.choice.set("-Select Set for Fit-")
+                #             self.menu["menu"].delete(i, i)
+                #             break
+                #         i += 1
                 test.plotref.set_visible(test.active.get())
                 if not (test.active.get()):
                     for p in test.fits:
