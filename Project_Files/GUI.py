@@ -82,9 +82,9 @@ def buildFit(window):
 
     # Create Holding label and buttons
     Button(sub_frame, text="Holding", command=window.zoom_holding, width=9, takefocus=NO).grid(row=3, column=0)
-    window.hold_choice = StringVar(sub_frame)
-    window.hold_choice.set("Holding")
-    menu = OptionMenu(sub_frame, window.hold_choice, *options)
+    window.vars['hold choice'] = StringVar(sub_frame)
+    window.vars['hold choice'].set("Holding")
+    menu = OptionMenu(sub_frame, window.vars['hold choice'], *options)
     menu.config(width=8)
     menu.grid(row=3, column=1)
     Button(sub_frame, text="Fit", command=lambda: dm.autoFit(window, 'HOLD'), takefocus=NO).grid(row=3, column=2)

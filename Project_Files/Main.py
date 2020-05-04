@@ -34,7 +34,7 @@ class Window:
         self.root.wm_title("Nano-Indentation Graphs")   # Title the window
         print(ttk.Style().theme_names())
         style = ttk.Style()
-        style.theme_use('aqua')
+        style.theme_use('default')
         style.configure('lefttab.TNotebook', tabposition='wn')
         self.nb = ttk.Notebook(self.root, style='lefttab.TNotebook')
         self.nb.pack(side="right", fill='y')
