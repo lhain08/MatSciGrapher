@@ -68,7 +68,7 @@ class HoldingEquation:
 
 def autoFit(plot, stage, show=True, test_index=None):
     if test_index is None:
-        test_index = "Set 0" #plot.vars['choice'].get()
+        test_index = plot.vars['set choice'].get()
         if test_index == "-Select Set for Fit-":
             plot.error(1)
             return
