@@ -32,7 +32,6 @@ class Window:
         # Reuseable frames
         self.root = tk.Tk()
         self.root.wm_title("Nano-Indentation Graphs")   # Title the window
-        print(ttk.Style().theme_names())
         style = ttk.Style()
         style.theme_use('default')
         style.configure('lefttab.TNotebook', tabposition='wn')
@@ -349,6 +348,8 @@ class Window:
             message = "Overlapping content is displayed in originally selected directory"
         elif code == 8:
             message = "No data found in selected content"
+        elif code == 9:
+            message = "There was an issue with one or more files in the selected folder"
         messagebox.showinfo("Warning", message)
 
 

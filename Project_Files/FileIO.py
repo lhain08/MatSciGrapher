@@ -1,6 +1,7 @@
 import DataManip as Dm
 import os
 import math
+from tkinter import simpledialog
 
 
 # Function to read in a data file
@@ -11,8 +12,7 @@ def read_file(addr):
     while len(f.readline().split("\t")) != 3:
         n += 1
         if n > 10:
-            print('Error: data not found in file', addr)
-            exit(1)
+            raise IOError('Error: data not found in file ' + addr)
     # Now start interpreting the data
     line = f.readline()
     t = Dm.Test()
@@ -46,23 +46,33 @@ def retrieve_data(window, folder):
         file_names = next(os.walk(folder))[2]
     tests = []
     load_t = []
+    issue = False
     for fn in file_names:
-        if not ("analysis" in fn.lower()):
-            t, breaks = read_file(folder + "/" + fn)
-            tests.append(t)
-            if len(breaks) > 1:
-                load_t.append(breaks[1])
+        try:
+            if not ("analysis" in fn.lower()):
+                t, breaks = read_file(folder + "/" + fn)
+                tests.append(t)
+                if len(breaks) > 1:
+                    load_t.append(breaks[1])
+        except IOError as e:
+            print(e)
+            issue = True
+
+    # Notify the user if there was any issues with the data
+    if issue:   window.error(9)
 
     # Get the title for the plot from the folder name
     fname = folder.split('/')[-1]
     title = fname.replace('-', ' ')
 
     # Get the loading rate
-    load_time = fname.split('-')[-1]
-    load_time = int(load_time[:3])
+    try:
+        load_time = fname.split('-')[-1]
+        load_time = int(load_time[:3])
+    except ValueError:
+        load_time = simpledialog.askstring("String", "Enter the load time")
     rate = 240/load_time
     window.load_time = load_time
-
 
     # Equation constants
     A = (4*rate**2) / (math.pi * (1 - (0.25 ** 2)) * math.tan(math.radians(70.3)))
