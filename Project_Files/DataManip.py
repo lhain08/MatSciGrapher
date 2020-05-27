@@ -120,7 +120,7 @@ def autoFit(plot, stage, show=True, test_index=None):
         ss_res = np.sum(residuals**2)
         ss_tot = np.sum((load_array-np.mean(load_array))**2)
         r_squared = 1 - (ss_res / ss_tot)
-        #GUI.insert_results(plot.result_f, plot, params, eq, r_squared)
+        GUI.insert_results(plot, params, eq, r_squared)
     return params
 
 

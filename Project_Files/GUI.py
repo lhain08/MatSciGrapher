@@ -130,3 +130,48 @@ def push_check(frame, color, intvar, i, cmd):
     check_button.pack(side=TOP)
     check_button.select()
     return check_button
+
+
+'''
+Takes the window object and creates the tab for displaying results
+'''
+def buildResults(window):
+    # Initiate the parent tab
+    parent = Frame(window.nb)
+    window.nb.add(parent, text="Results")
+
+    # Header
+    Label(parent, text="Most Recent Fit Results", font='Helvetica 15 bold').pack(side=TOP)
+
+    # Wrapper frame we will store to hold most recent results
+    window.widgets['result'] = Frame(parent)
+    window.widgets['result'].pack(side=TOP)
+
+    # Placeholder
+    Label(window.widgets['result'], \
+          text="No results yet.\nFit a data set and the results\nwill appear here").pack(side=TOP)
+
+    # Text Box for result history
+    window.widgets['history'] = tk.Text(parent)
+    window.widgets['history'].pack(side=TOP, expand=True, fill='both', anchor='nw')
+
+
+# Inserts fitting results
+def insert_results(window, params, eq, r_squared):
+    # Get wrapper frame for most recent results
+    frame = window.widgets['result']
+    # Clear previous results
+    for child in frame.winfo_children():
+        child.destroy()
+    # Initialize the buffer for the history widget
+    buffer = "Result of fitting Set %d with equation %s\n" % \
+             (int(window.vars['set choice'].get().strip("Set ")), eq.__name__)
+    window.widgets['history'].insert(END, buffer)
+    # Insert r_squared at the top of the list
+    Label(frame, text="R^2: {0}".format(r_squared), pady=5).pack(side=TOP)
+    # Fill with rest of results
+    param_names = inspect.getfullargspec(eq).args[1:]
+    for i in range(len(params)):
+        Label(frame, text="%s: %s" % (param_names[i], params[i])).pack(side=TOP)
+    window.cur_eq = eq
+    window.result_params = params

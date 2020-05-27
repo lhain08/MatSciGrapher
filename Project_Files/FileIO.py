@@ -38,7 +38,6 @@ def read_file(addr):
 
 def retrieve_data(window, folder):
     # Retrieve all data from folder and remove analysis file
-    print(folder)
     if os.path.isfile(folder):
         file_names = [os.path.split(folder)[1]]
         folder = os.path.split(folder)[0]
@@ -117,4 +116,3 @@ def output_params(title, data):
         output += "\n"
     f.write(output)
     f.close()
-

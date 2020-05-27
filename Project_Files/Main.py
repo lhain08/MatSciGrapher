@@ -61,8 +61,9 @@ class Window:
 
         # Build Tabs
         GUI.buildDir(self)
-        GUI.buildFit(self)
         GUI.buildSets(self)
+        GUI.buildFit(self)
+        GUI.buildResults(self)
 
 
     # Prompt for a data folder
@@ -124,12 +125,6 @@ class Window:
         # Create the title
         self.fig.suptitle(title, fontsize=20)
         self.canvas.draw()
-
-        # Set max range for sliders
-        #self.upper.delete(0, END)
-        #self.upper.insert(0, self.max_time)
-        #self.lower.delete(0, END)
-        #self.lower.insert(0, 0)
 
     # Hides/shows plots when boxes are checked
     def checked(self):
