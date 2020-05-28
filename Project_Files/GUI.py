@@ -72,38 +72,38 @@ def buildFit(window):
     options = get_funcs()
 
     # Create Loading label and buttons
-    Button(sub_frame, text="Loading", command=window.zoom_loading, width=9, takefocus=NO).grid(row=2, column=0)
+    Button(sub_frame, text="Loading", command=window.zoom_loading, width=9, takefocus=NO).grid(row=3, column=0)
     window.vars['load choice'] = StringVar(sub_frame)
     window.vars['load choice'].set("Loading")
     menu = OptionMenu(sub_frame, window.vars['load choice'], *options)
     menu.config(width=8)
-    menu.grid(row=2, column=1)
-    Button(sub_frame, text="Fit", command=lambda: dm.autoFit(window, 'LOAD'), takefocus=NO).grid(row=2, column=2)
+    menu.grid(row=3, column=1)
+    Button(sub_frame, text="Fit", command=lambda: dm.autoFit(window, 'LOAD'), takefocus=NO).grid(row=3, column=2)
 
     # Create Holding label and buttons
-    Button(sub_frame, text="Holding", command=window.zoom_holding, width=9, takefocus=NO).grid(row=3, column=0)
+    Button(sub_frame, text="Holding", command=window.zoom_holding, width=9, takefocus=NO).grid(row=4, column=0)
     window.vars['hold choice'] = StringVar(sub_frame)
     window.vars['hold choice'].set("Holding")
     menu = OptionMenu(sub_frame, window.vars['hold choice'], *options)
     menu.config(width=8)
-    menu.grid(row=3, column=1)
-    Button(sub_frame, text="Fit", command=lambda: dm.autoFit(window, 'HOLD'), takefocus=NO).grid(row=3, column=2)
+    menu.grid(row=4, column=1)
+    Button(sub_frame, text="Fit", command=lambda: dm.autoFit(window, 'HOLD'), takefocus=NO).grid(row=4, column=2)
 
     # Create Unloading label and buttons
-    Button(sub_frame, text="Unloading", command=window.zoom_unloading, width=9, takefocus=NO).grid(row=4, column=0)
+    Button(sub_frame, text="Unloading", command=window.zoom_unloading, width=9, takefocus=NO).grid(row=5, column=0)
     window.unload_choice = StringVar(sub_frame)
     window.unload_choice.set(options[0])
     menu = OptionMenu(sub_frame, window.unload_choice, *options)
     menu.config(width=8)
-    menu.grid(row=4, column=1)
-    Button(sub_frame, text="Fit", command=lambda: dm.autoFit(window, 'UNLOAD'), takefocus=NO).grid(row=4, column=2)
+    menu.grid(row=5, column=1)
+    Button(sub_frame, text="Fit", command=lambda: dm.autoFit(window, 'UNLOAD'), takefocus=NO).grid(row=5, column=2)
 
     # Create Set Selection menu
     window.vars['set choice'] = StringVar(parent)
     window.vars['set choice'].set("-Select Set for Fit-")
     options = {"-Select Set for Fit-"}
     window.widgets['menu'] = OptionMenu(sub_frame, window.vars['set choice'], *options)
-    window.widgets['menu'].grid(row=5, column=0, columnspan=3, sticky="ew")
+    window.widgets['menu'].grid(row=2, column=0, columnspan=3, sticky="ew")
     window.widgets['menu'].items = []
 
 
