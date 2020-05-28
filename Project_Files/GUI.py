@@ -52,6 +52,13 @@ def buildDir(window):
     Button(parent, command=lambda: window.open_folder(window.widgets['tree'].focus()),\
            text="Open Selected Data", takefocus=NO).pack(side='top')
 
+    ### SAVE ###
+    ttk.Separator(parent, orient=HORIZONTAL).pack(pady=10, fill='x', anchor='ne')
+    Label(parent, text="Save Data", font="Helvetica 15 bold").pack(side=TOP)
+
+    # Save plot button
+    Button(parent, text="Save Plot", command=window.save_as, width=20).pack(side=TOP)
+
 
 '''
 Takes the window object and appends a new tab to the notebook

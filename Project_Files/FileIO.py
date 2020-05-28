@@ -103,16 +103,3 @@ def populate_tree(tree, folder, parent='', count = 0):
 
     return returnVal
 
-
-# Pushes the most recent fit to the output file
-def output_params(title, data):
-    f = open("Fit_Results/" + title + ".txt", "w")
-    output = "Set Number  | E_infinity | E_1        | Lambda_1   | P0         | Tau        | b          |\n"
-    output += "-" * 91 + "\n"
-    for i in range(len(data)):
-        output += "Set {0:<7} |".format(i)
-        for e in data[i]:
-            output += "{0:^12.5}|".format(e)
-        output += "\n"
-    f.write(output)
-    f.close()
