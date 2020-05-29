@@ -113,8 +113,28 @@ def buildFit(window):
     window.widgets['menu'].grid(row=2, column=0, columnspan=3, sticky="ew")
     window.widgets['menu'].items = []
 
-    # Bound sliders
-    Label(parent, text="Select Plot Range", font="Helvetica 15 bold").pack(side=TOP)
+    # Manual Zoom option
+    Label(parent, text="Zoom to Range", font="Helvetica 15 bold").pack(side=TOP)
+    # Configure wrapper
+    wrap = Frame(parent)
+    wrap.pack(side=TOP, fill='x')
+    wrap.grid_columnconfigure(0, weight=1, uniform="zoom")
+    wrap.grid_columnconfigure(1, weight=1, uniform="zoom")
+    # Build the Entries
+    c = parent.register(dm.validate_float)
+    frame = LabelFrame(wrap, text="Upper")
+    upper = Entry(frame, validate="key", vcmd=(c, '%P'), width=5)
+    upper.pack(fill='x')
+    frame.grid(row=0, column=1, sticky='ew')
+    window.widgets['upper zoom'] = upper
+
+    frame = LabelFrame(wrap, text="Lower")
+    lower = Entry(frame, validate="key", vcmd=(c, '%P'), width=5)
+    lower.pack(fill='x')
+    frame.grid(row=0, column=0, sticky='ew')
+    window.widgets['lower zoom'] = lower
+    # Zoom Button
+    Button(parent, text="Zoom", command=window.zoom_range).pack(side=TOP, fill='x')
 
 
 

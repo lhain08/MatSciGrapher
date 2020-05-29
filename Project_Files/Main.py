@@ -211,11 +211,11 @@ class Window:
     # Zoom to a specified range
     def zoom_range(self):
         # If entry is empty, assume zero
-        for e in self.z_range:
+        for e in (self.widgets['upper zoom'], self.widgets['lower zoom']):
             if e.get() == "":
                 e.insert(0, "0")
-        lower = self.z_range[0].get()
-        upper = self.z_range[1].get()
+        lower = self.widgets['lower zoom'].get()
+        upper = self.widgets['upper zoom'].get()
         try:
             lower = float(lower)
             upper = float(upper)
