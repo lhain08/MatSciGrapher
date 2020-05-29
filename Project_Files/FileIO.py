@@ -1,4 +1,5 @@
 import DataManip as Dm
+import Functions
 import os
 import math
 from tkinter import simpledialog
@@ -103,3 +104,11 @@ def populate_tree(tree, folder, parent='', count = 0):
 
     return returnVal
 
+
+# Returns a list of all the available functions in Functions.py
+def get_funcs():
+    options = []
+    for f in dir(Functions):
+        if type(getattr(Functions, f)).__name__ == "function":
+            options.append(f)
+    return options

@@ -29,14 +29,20 @@ class Window:
         self.min_load = 0
         self.title = ""
 
+        # Holders for last fit info
+        self.cur_eq = None
+        self.result_params = None
+
         # Reuseable frames
         self.root = tk.Tk()
         self.root.wm_title("Nano-Indentation Graphs")   # Title the window
         style = ttk.Style()
         style.theme_use('default')
-        style.configure('lefttab.TNotebook', tabposition='wn')
-        self.nb = ttk.Notebook(self.root, style='lefttab.TNotebook')
-        self.nb.pack(side="right", fill='y')
+        style.configure('lefttab.TNotebook', tabposition='en')
+        border = Frame(self.root, bd=2, relief=GROOVE)
+        border.pack(side=RIGHT, fill='both')
+        self.nb = ttk.Notebook(border, style='lefttab.TNotebook')
+        self.nb.pack(side=RIGHT, fill='both')
         self.graph = Frame(self.root)   # Container for graph canvas
         self.graph.pack(side="left")
 
@@ -64,6 +70,7 @@ class Window:
         GUI.buildSets(self)
         GUI.buildFit(self)
         GUI.buildResults(self)
+        GUI.buildManual(self)
 
 
     # Prompt for a data folder
@@ -160,21 +167,25 @@ class Window:
                 self.clear_fits()
         self.checked()
 
-    # Updates lower range when upper slider is moved
-    def update_lower(self, v):
-        self.lower.configure(to=v)
-
-    # Updates upper range when lower slider is moved
-    def update_upper(self, v):
-        self.upper.configure(from_=v)
-
     # Set the values of the lower and upper fitting scales
-    def set_range(self, low, high):
+    def set_range(self, zone):
+        if zone.upper() == "LOAD":
+            low = 0
+            high = self.load_time
+        elif zone.upper() == "HOLD":
+            low = self.load_time
+            high = self.max_time - 10
+        elif zone.upper() == "UNLOAD":
+            low = self.max_time - 10
+            high = self.max_time
+        else:
+            self.error(0)
+            return
         if low >= 0 and high >= 0:
-            self.lower.delete(0, END)
-            self.lower.insert(0, low)
-            self.upper.delete(0, END)
-            self.upper.insert(0, high)
+            self.widgets['lower entry'].delete(0, END)
+            self.widgets['lower entry'].insert(0, low)
+            self.widgets['upper entry'].delete(0, END)
+            self.widgets['upper entry'].insert(0, high)
 
     # Resets plot to original view
     def revert(self):
@@ -288,8 +299,8 @@ class Window:
     Returns: None
     '''
     def func_select_callback(self, *args):
-        selection = self.func_select.get()
-        self.param_entries = GUI.set_params_menu(self.param_frame, getattr(Functions, selection))
+        selection = self.vars['manual function'].get()
+        self.param_entries = GUI.set_params_menu(self)
 
     '''
     Copies the results of the most recent auto-fit to the manual fit parameter menu
@@ -299,13 +310,13 @@ class Window:
     Returns: None
     '''
     def copy_results(self):
-        if window.cur_eq is not None:
-            self.func_select.set(window.cur_eq.__name__)
+        if self.cur_eq is not None:
+            self.vars['manual function'].set(self.cur_eq.__name__)
         else:
             self.error(4)
             return
-        for i in range(len(self.param_entries)):
-            self.param_entries[i].insert(0, self.result_params[i])
+        for i in range(len(self.result_params)):
+            self.widgets['manual entries'][i].insert(0, self.result_params[i])
 
     def toggle_fit(self):
         if self.fit_choice.config('text')[-1] == 'Fit to Default':

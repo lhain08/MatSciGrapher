@@ -165,15 +165,6 @@ def set_params_menu(frame, function_name):
     return entries       # Return references so frames can be destroyed and entries can be accessed
 
 
-# Returns a list of all the available functions in Functions.py
-def get_funcs():
-    options = []
-    for f in dir(Functions):
-        if type(getattr(Functions, f)).__name__ == "function":
-            options.append(f)
-    return options
-
-
 # Creates the header for the Bottom taskbar and the function picker
 # Returns reference to the option menu
 def function_menu(frame, cmd=None):

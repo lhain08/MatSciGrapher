@@ -113,6 +113,10 @@ def buildFit(window):
     window.widgets['menu'].grid(row=2, column=0, columnspan=3, sticky="ew")
     window.widgets['menu'].items = []
 
+    # Bound sliders
+    Label(parent, text="Select Plot Range", font="Helvetica 15 bold").pack(side=TOP)
+
+
 
 def buildSets(window):
     parent = Frame(window.nb)
@@ -156,7 +160,10 @@ def buildResults(window):
     window.widgets['history'].tag_configure("bold", font="Helvetica 12 bold")
 
 
-# Inserts fitting results
+'''
+Takes window object, parameter values, function object, and R^2 value
+Inserts the results of the fit using the given equation into the history log
+'''
 def insert_results(window, params, eq, r_squared):
     # Insert header for history log
     window.widgets['history'].configure(state='normal')
@@ -179,3 +186,88 @@ def insert_results(window, params, eq, r_squared):
 
     # Lock history log so user cannot edit results
     window.widgets['history'].configure(state='disabled')
+
+
+def buildManual(window):
+    # Create the tab
+    parent = Frame(window.nb)
+    window.nb.add(parent, text="Manual Plot")
+    # Create a header
+    Label(parent, text="Select a Function", font="Helvetica 15 bold").pack(side=TOP)
+
+    # Create dropdown to select equation
+    options = FileIO.get_funcs()
+    window.vars['manual function'] = StringVar(parent)
+    window.vars['manual function'].set(options[0])
+    window.vars['manual function'].trace('w', lambda *args: window.func_select_callback())
+    menu = OptionMenu(parent, window.vars['manual function'], *options)
+    menu.pack(side=TOP, fill='x')
+
+    # Create wrapper frame for holding parameter entry boxes
+    window.widgets['manual params'] = Frame(parent)
+    window.widgets['manual params'].pack(side=TOP)
+    set_params_menu(window)
+
+    # Copy paramaters button
+    Button(parent, text="Copy Last Fit Results", command=window.copy_results).pack(side=TOP, fill='x')
+
+    ### Bounds Entries ###
+    # Header
+    Label(parent, text="Enter Bounds for plot", font="Helvetica 15 bold").pack(side=TOP)
+    # Configure wrapper
+    wrap = Frame(parent)
+    wrap.pack(side=TOP, fill='x')
+    wrap.grid_columnconfigure(0, weight=1, uniform="bounds")
+    wrap.grid_columnconfigure(1, weight=1, uniform="bounds")
+    # Build the Entries
+    c = parent.register(dm.validate_float)
+    frame = LabelFrame(wrap, text="Upper")
+    upper = Entry(frame, validate="key", vcmd=(c, '%P'), width=5)
+    upper.pack(fill='x')
+    frame.grid(row=0, column=1, sticky='ew')
+    window.widgets['upper entry'] = upper
+
+    frame = LabelFrame(wrap, text="Lower")
+    lower = Entry(frame, validate="key", vcmd=(c, '%P'), width=5)
+    lower.pack(fill='x')
+    frame.grid(row=0, column=0, sticky='ew')
+    window.widgets['lower entry'] = lower
+
+    # Quick set buttons
+    wrap = Frame(parent)
+    wrap.pack(side=TOP, fill='x')
+    for i in range(3):
+        wrap.grid_columnconfigure(i, weight=1, uniform='quickset')
+    Button(wrap, text='Load', command=lambda: window.set_range('LOAD')).grid(row=0, column=0, sticky='ew')
+    Button(wrap, text='Hold', command=lambda: window.set_range('HOLD')).grid(row=0, column=1, sticky='ew')
+    Button(wrap, text='Unload', command=lambda: window.set_range('UNLOAD')).grid(row=0, column=2, sticky='ew')
+
+    # Buttons
+    ttk.Separator(parent, orient=HORIZONTAL).pack(side=TOP, pady=10, fill='x', anchor='ne')
+    Button(parent, text='Plot Function', command=lambda: dm.Manual_fit(window)).pack(side=TOP, fill='x')
+    Button(parent, text='Clear All Fits', command=window.clear_fits).pack(side=TOP, fill='x')
+
+
+# Populates the manual plot tab with parameter entry boxes
+def set_params_menu(window):
+    # Erases any previous parameters
+    for child in window.widgets['manual params'].winfo_children():
+        child.destroy()
+    # Create a header
+    header_text = Label(window.widgets['manual params'], text="Enter Parameters", font='Helvetica 15 bold')
+    header_text.pack(side=TOP)
+
+    # Get the parameter list
+    functionObj = getattr(Functions, window.vars['manual function'].get())
+    params = inspect.getfullargspec(functionObj).args
+    c = window.widgets['manual params'].register(dm.validate_float)        # To allow entries to only take floats
+    # Pack the labels and entries
+    window.widgets['manual entries'] = []
+    for p in params:
+        if p.lower() != 'time':
+            small_frame = Frame(window.widgets['manual params'])
+            Label(small_frame, text=p + ": ").pack(side=LEFT)
+            ent = Entry(small_frame, validate="key", vcmd=(c, '%P'))
+            ent.pack(side=RIGHT)
+            window.widgets['manual entries'].append(ent)
+            small_frame.pack(side=TOP, anchor="e")

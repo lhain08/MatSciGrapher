@@ -126,14 +126,14 @@ def autoFit(plot, stage, show=True, test_index=None):
 
 # Manual fit with parameters and bounds
 def Manual_fit(window):
-    bounds = [float(window.lower.get()), float(window.upper.get())]
+    bounds = [float(window.widgets['lower entry'].get()), float(window.widgets['upper entry'].get())]
     try:
-        params = [float(e.get()) for e in window.param_entries]
+        params = [float(e.get()) for e in window.widgets['manual entries']]
     except ValueError:
         print("Please enter valid parameters")
         return
 
-    eq = getattr(Functions, window.func_select.get())
+    eq = getattr(Functions, window.vars['manual function'].get())
     n = max([200,(bounds[1] - bounds[0])*5])
     time = np.linspace(bounds[0], bounds[1], num=n)
     window.TempPlots.append(window.ax.plot(time, eq(time, *params), color="black"))
