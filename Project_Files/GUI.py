@@ -150,6 +150,10 @@ def buildSets(window):
     # Headers
     Label(parent, text="Choose sets to be displayed", font="Helvetica 15 bold").pack(side='top')
 
+    # Select/Deselect all buttons
+    Button(parent, text="Select All", command=window.check_all, takefocus=NO).pack(side=TOP, fill='x')
+    Button(parent, text="Deselect All", command=lambda: window.check_all(True), takefocus=NO).pack(side=TOP, fill='x')
+
     # Build the container for checkboxes
     window.widgets['check frame'] = Frame(parent)
     window.widgets['check frame'].pack(side='top')

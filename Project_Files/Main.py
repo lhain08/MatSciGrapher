@@ -160,7 +160,7 @@ class Window:
 
     # Selects all checkboxes
     def check_all(self, deselect=False):
-        for child in self.check_frame.winfo_children():
+        for child in self.widgets['check frame'].winfo_children():
             if not deselect:    child.select()
             else:
                 child.deselect()
