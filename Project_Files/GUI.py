@@ -135,7 +135,10 @@ def buildFit(window):
     window.widgets['lower zoom'] = lower
     # Zoom Button
     Button(parent, text="Zoom", command=window.zoom_range).pack(side=TOP, fill='x')
-
+    # Toggle Fit Range choice
+    window.fit_choice = Button(parent, text="Fit to Default", command=window.toggle_fit)
+    window.fit_choice.pack(side=TOP, fill='x')
+    window.vars['fit choice'] = 'Fit to Default'
 
 
 def buildSets(window):

@@ -321,8 +321,10 @@ class Window:
     def toggle_fit(self):
         if self.fit_choice.config('text')[-1] == 'Fit to Default':
             self.fit_choice.config(text='Fit to View')
+            self.vars['fit choice'] = 'Fit to View'
         else:
             self.fit_choice.config(text='Fit to Default')
+            self.vars['fit choice'] = 'Fit to Default'
 
     # Begin the loop
     def start(self):

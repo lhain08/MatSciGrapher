@@ -89,7 +89,7 @@ def autoFit(plot, stage, show=True, test_index=None):
     else:
         plot.error()
         return
-    if plot.vars.get('fit choice') is not None and plot.vars['fit choice'].config('text')[-1] == 'Fit to View':
+    if plot.vars.get('fit choice') is not None and plot.vars['fit choice'] == 'Fit to View':
         start_t, end_t = plot.ax.get_xlim()
     p = len(inspect.getfullargspec(eq).args[1:])
     index0 = plot.get_time_index(start_t, test_index)
