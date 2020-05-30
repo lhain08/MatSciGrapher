@@ -98,9 +98,9 @@ def buildFit(window):
 
     # Create Unloading label and buttons
     Button(sub_frame, text="Unloading", command=window.zoom_unloading, width=9, takefocus=NO).grid(row=5, column=0)
-    window.unload_choice = StringVar(sub_frame)
-    window.unload_choice.set(options[0])
-    menu = OptionMenu(sub_frame, window.unload_choice, *options)
+    window.vars['unload choice'] = StringVar(sub_frame)
+    window.vars['unload choice'].set(options[0])
+    menu = OptionMenu(sub_frame, window.vars['unload choice'], *options)
     menu.config(width=8)
     menu.grid(row=5, column=1)
     Button(sub_frame, text="Fit", command=lambda: dm.autoFit(window, 'UNLOAD'), takefocus=NO).grid(row=5, column=2)
@@ -139,6 +139,8 @@ def buildFit(window):
     window.fit_choice = Button(parent, text="Fit to Default", command=window.toggle_fit)
     window.fit_choice.pack(side=TOP, fill='x')
     window.vars['fit choice'] = 'Fit to Default'
+    # Clear Fits Button
+    Button(parent, text='Clear All Fits', command=window.clear_fits).pack(side=TOP, fill='x')
 
 
 def buildSets(window):
