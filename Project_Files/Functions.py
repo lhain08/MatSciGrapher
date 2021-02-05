@@ -24,7 +24,7 @@ def Loading_2(time, E_infinity, E1, lambda1, E2, lambda2):
     return A * (p1 + p2 + p3 + p4 + p5)
 
 
-Loading_2.__setattr__("bounds", ([0, 0, 0, -np.inf, 0], [np.inf]*5))
+Loading_2.__setattr__("bounds", ([0, 0, 0, 0, 0], [np.inf]*5))
 #Loading_2.__setattr__("p0", [10000, 10000, 10000, 10000, 10000])
 
 
@@ -70,3 +70,6 @@ def Holding_1_Exp(time, P0, tao_0):
 
 
 Holding_1_Exp.__setattr__("bounds", ([0, 0], [np.inf, np.inf]))
+
+
+
